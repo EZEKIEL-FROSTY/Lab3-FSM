@@ -3,18 +3,18 @@ module f1_starting_light #(
 )(
     input  logic             clk,      // clock 
     input  logic             rst,      // reset
-    input  logic             cmd_delay,
-    input  logic             cmd_seq,
     input  logic             trigger,   
-    input  logic             en,       // cmd_seq
     input  logic [WIDTH-1:0] N,        // clock divided by N+1
     output logic [WIDTH-1:0] data_out      // tick output
 );
-    logic   K;
+    logic [6:0] K;
     logic   tick;
     logic   time_out;
     logic   mux_out;
-    assign mux_out = tick | time_out;
+    logic   cmd_delay;
+    logic   cmd_seq;
+
+    assign mux_out = cmd_seq ? tick : time_out;
 
 clktick clkdiv(
     .clk(clk),
@@ -39,7 +39,7 @@ lfsr_7 shift(
     .data_out(K)
 );
 
-delay wait(
+delay waiting(
     .clk(clk),
     .rst(rst),
     .trigger(cmd_delay),
